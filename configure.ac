@@ -34,8 +34,9 @@ m4_define([fuse_copyright], ["(c) 1999-2021 Philip Kendall and others"])
 m4_define([fuse_url], [http://fuse-emulator.sourceforge.net/])
 m4_define([fuse_bugreport], [http://sourceforge.net/p/fuse-emulator/bugs/])
 
-AC_INIT([fuse],[fuse_version],[fuse_bugreport],[fuse],[fuse_url])
-AC_CONFIG_SRCDIR(fuse.c)
+AC_INIT([libfuse],[fuse_version],[fuse_bugreport],[libfuse],[fuse_url])
+AC_CONFIG_SRCDIR(libfuse.c)
+# AC_CONFIG_SRCDIR(fuse.c)
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS(config.h)
 AC_CANONICAL_HOST
@@ -322,6 +323,20 @@ if test -z "$UI"; then
   fi
 fi
 
+dnl Look for SWIG library interface as fake UI (default=no)
+if test -z "$UI"; then
+  AC_MSG_CHECKING(whether SWIG interface requested)
+  AC_ARG_WITH(swig,
+  [  --with-swig          use SWIG library interface as fake UI],
+  if test "$withval" = no; then swig_ui=no; else swig_ui=yes; fi,
+  swig_ui=no)
+  AC_MSG_RESULT($swig_ui)
+  if test "$swig_ui" = yes; then
+    AC_DEFINE([UI_SWIG], 1, [Defined if SWIG UI is in use])
+    UI=swig
+  fi
+fi
+
 dnl Look for GTK (default=yes)
 if test -z "$UI"; then
   AC_MSG_CHECKING(whether GTK UI requested)
@@ -442,6 +457,7 @@ fi
 AM_CONDITIONAL(UI_FB, test "$UI" = fb)
 AM_CONDITIONAL(UI_GTK, test "$UI" = gtk)
 AM_CONDITIONAL(UI_NULL, test "$UI" = null)
+AM_CONDITIONAL(UI_SWIG, test "$UI" = swig)
 AM_CONDITIONAL(UI_SDL, test "$UI" = sdl)
 AM_CONDITIONAL(UI_WII, test "$UI" = wii)
 AM_CONDITIONAL(UI_WIN32, test "$UI" = win32)

@@ -21,7 +21,7 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-bin_PROGRAMS = fuse
+bin_PROGRAMS = libfuse
 
 noinst_PROGRAMS =
 
@@ -56,6 +56,8 @@ fuse_SOURCES = display.c \
 	uimedia.c \
 	utils.c
 
+libfuse_SOURCES = $(fuse_SOURCES) + libfuse.c
+
 fuse_LDADD = \
              $(PTHREAD_LIBS) \
              $(LIBSPECTRUM_LIBS) \
@@ -65,8 +67,11 @@ fuse_LDADD = \
              $(X_LIBS) \
              $(XML_LIBS)
 
+libfuse_LDADD = $(fuse_LDADD)
+
 if USE_SDL
 fuse_LDADD += $(SDL_LIBS)
+libfuse_LDADD += $(SDL_LIBS)
 endif
 
 fuse_DEPENDENCIES =
@@ -189,6 +194,7 @@ include ui/Makefile.am
 include ui/fb/Makefile.am
 include ui/gtk/Makefile.am
 include ui/null/Makefile.am
+include ui/swig/Makefile.am
 include ui/scaler/Makefile.am
 include ui/sdl/Makefile.am
 include ui/widget/Makefile.am
