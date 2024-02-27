@@ -34,9 +34,8 @@ m4_define([fuse_copyright], ["(c) 1999-2021 Philip Kendall and others"])
 m4_define([fuse_url], [http://fuse-emulator.sourceforge.net/])
 m4_define([fuse_bugreport], [http://sourceforge.net/p/fuse-emulator/bugs/])
 
-AC_INIT([libfuse],[fuse_version],[fuse_bugreport],[libfuse],[fuse_url])
-AC_CONFIG_SRCDIR(libfuse.c)
-# AC_CONFIG_SRCDIR(fuse.c)
+AC_INIT([fuse],[fuse_version],[fuse_bugreport],[fuse],[fuse_url])
+AC_CONFIG_SRCDIR(fuse.c)
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS(config.h)
 AC_CANONICAL_HOST
