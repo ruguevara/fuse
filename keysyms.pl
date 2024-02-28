@@ -33,7 +33,7 @@ my $ui = shift;
 $ui = 'gtk' unless defined $ui;
 
 die "$0: unrecognised user interface: $ui\n"
-  unless 0 < grep { $ui eq $_ } ( 'gtk', 'x', 'fb', 'sdl', 'win32', 'wii' );
+  unless 0 < grep { $ui eq $_ } ( 'gtk', 'x', 'fb', 'sdl', 'win32', 'wii', 'swig' );
 
 sub fb_keysym ($) {
 
@@ -41,6 +41,26 @@ sub fb_keysym ($) {
 
     $keysym =~ tr/a-z/A-Z/;
     substr( $keysym, 0, 4 ) = 'WIN' if substr( $keysym, 0, 5 ) eq 'META_';
+
+    return $keysym;
+}
+
+sub tb2_keysym ($) {
+
+    my $keysym = shift;
+
+    $keysym =~ tr/a-z/A-Z/;
+    return "TB_KEY_$keysym";
+}
+
+sub tb2_unicode_keysym ($) {
+
+    my $keysym = shift;
+
+    if ( $keysym eq "'" ) {
+        $keysym = "\\'";
+    }
+    $keysym = "'$keysym'";
 
     return $keysym;
 }
@@ -61,7 +81,7 @@ sub sdl_keysym ($) {
     }
     $keysym =~ s/(.*)_L$/L$1/;
     $keysym =~ s/(.*)_R$/R$1/;
-    
+
     # All the magic #defines start with `SDLK_'
     $keysym = "SDLK_$keysym";
 
@@ -108,7 +128,7 @@ my %ui_data = (
     fb   => { headers => [ ],
 	      # max_length not used
 	      skips => { },
-	      translations => { 
+	      translations => {
 	          Mode_switch => 'MENU',
 	      },
 	      function => \&fb_keysym
@@ -135,6 +155,60 @@ my %ui_data = (
 	      function => sub ($) { "GDK_KEY_$_[0]" },
     	    },
 
+    swig  => { headers => [ 'ui/swig/termbox2.h'],
+	      max_length => 18,
+	      skips => { map { $_ => 1 } ( 'Hyper_L','Hyper_R','Caps_Lock',
+                         'A' .. 'Z', 'asciitilde', 'bar', 'dead_circumflex',
+                         'braceleft', 'braceright', 'percent' ) },
+	      unicode_skips => { map { $_ => 1 } qw( Hyper_L Hyper_R Caps_Lock
+                         Escape F1 F2 F3 F4 F5 F6 F7 F8 F9 F10 F11 F12
+                         BackSpace Tab Caps_Lock Return Shift_L Shift_R
+                         Control_L Control_R Alt_L Alt_R Meta_L Meta_R
+                         Super_L Super_R Mode_switch Up Down Left Right
+                         Insert Delete Home End Page_Up Page_Down KP_Enter
+                         dead_circumflex ) },
+	      translations => {
+            Return      => 'ENTER',
+            Escape      => 'ESC',
+	      },
+	      unicode_translations => {
+                  space       => ' ',
+                  exclam      => '!',
+                  dollar      => '$',
+                  numbersign  => '#',
+                  ampersand   => "&",
+                  apostrophe  => "'",
+                  asciitilde  => "~",
+                  at          => "@",
+                  backslash   => "\\\\",
+                  braceleft   => "{",
+                  braceright  => "}",
+                  bracketleft => "[",
+                  bracketright => "]",
+                  parenleft   => "(",
+                  parenright  => ")",
+                  percent     => "%",
+                  question    => "?",
+                  quotedbl    => '\\"',
+                  asterisk    => "*",
+                  plus        => "+",
+                  comma       => ',',
+                  minus       => '-',
+                  period      => '.',
+                  slash       => '/',
+                  colon       => ':',
+                  semicolon   => ';',
+                  less        => '<',
+                  equal       => '=',
+                  greater     => '>',
+                  asciicircum => '^',
+                  bar         => '|',
+                  underscore  => '_',
+	      },
+            function => \&tb2_keysym,
+	        unicode_function => \&tb2_unicode_keysym,
+	    },
+
     sdl  => { headers => [ 'SDL.h' ],
 	      max_length => 18,
 	      skips => { map { $_ => 1 } ( 'Hyper_L','Hyper_R','Caps_Lock',
@@ -153,8 +227,8 @@ my %ui_data = (
 		  bracketleft => 'LEFTBRACKET',
 		  bracketright => 'RIGHTBRACKET',
 		  exclam      => 'EXCLAIM',
-		  Control_L   => 'LCTRL',	 
-		  Control_R   => 'RCTRL',	 
+		  Control_L   => 'LCTRL',
+		  Control_R   => 'RCTRL',
 		  equal       => 'EQUALS',
 		  numbersign  => 'HASH',
 		  Mode_switch => 'MENU',
@@ -224,7 +298,7 @@ my %ui_data = (
 					   'percent','period','question','quotedbl',
 					   'semicolon','slash','underscore',
 					   'A' .. 'Z' ) },
-	      translations => { 
+	      translations => {
 		  BackSpace   => 'BACK',
 		  Page_Up     => 'PRIOR',
 		  Page_Down   => 'NEXT',

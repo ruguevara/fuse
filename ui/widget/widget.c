@@ -299,7 +299,7 @@ size_t widget_charwidth( int c )
 void widget_rectangle( int x, int y, int w, int h, int col )
 {
     int mx, my;
-    
+
     for( my = 0; my < h; my++ )
       for( mx = 0; mx < w; mx++ )
         widget_putpixel( x + mx, y + my, col );
@@ -332,7 +332,7 @@ widget_draw_rectangle_outline(int x, int y, int w, int h, int colour )
   widget_draw_line_horiz( x, y+h-1, w, colour );
   widget_draw_line_vert( x, y, h, colour );
   widget_draw_line_vert( x+w-1, y, h, colour );
-}   
+}
 
 void
 widget_draw_rectangle_solid( int x, int y, int w, int h, int colour )
@@ -496,15 +496,20 @@ int widget_do( widget_type which, void *data )
   /* If we don't have a UI yet, we can't output widgets */
   if( !display_ui_initialised ) return 1;
 
+  printf("widget_do: %d\n", which);
+
   if( which == WIDGET_TYPE_QUERY && !settings_current.confirm_actions ) {
     widget_query.confirm = 1;
     return 0;
   }
 
+  printf("ui_widget_level: %d\n", ui_widget_level);
+
   if( ui_widget_level == -1 ) uidisplay_frame_save();
 
   /* We're now one widget level deeper */
   ui_widget_level++;
+  printf("ui_widget_level: %d\n", ui_widget_level);
 
   /* Store what type of widget we are and what data we were given */
   widget_return[ui_widget_level].type = which;
@@ -512,6 +517,7 @@ int widget_do( widget_type which, void *data )
 
   uidisplay_frame_restore();
 
+  printf("draw\n");
   /* Draw this widget */
   widget_data[ which ].draw( data );
 
@@ -521,7 +527,7 @@ int widget_do( widget_type which, void *data )
   /* Process this widget until it returns */
   widget_return[ui_widget_level].finished = 0;
   while( ! widget_return[ui_widget_level].finished ) {
-    
+
     /* Go to sleep for a bit */
     timer_sleep( 10 );
 
@@ -538,7 +544,7 @@ int widget_do( widget_type which, void *data )
 
   /* Now return to the previous widget level */
   ui_widget_level--;
-    
+
   if( ui_widget_level >= 0 ) {
 
     /* If we're going back to another widget, set up its keyhandler and

@@ -299,7 +299,7 @@ dnl Enable the SDL UI if all conditions are met
 if test "$sdl_ui" = yes; then
   if test "$sdl_available" = yes; then
     AC_DEFINE([UI_SDL], 1, [Defined if the SDL UI in use])
-    AC_DEFINE([USE_WIDGET], 1, [Defined if we're using a widget-based UI])
+    AC_DEFINE([USE_WIDGET], 1, [Defined if we are using a widget-based UI])
     UI=sdl
     WIDGET=widget
     use_sdl=yes
@@ -332,7 +332,9 @@ if test -z "$UI"; then
   AC_MSG_RESULT($swig_ui)
   if test "$swig_ui" = yes; then
     AC_DEFINE([UI_SWIG], 1, [Defined if SWIG UI is in use])
+    AC_DEFINE([USE_WIDGET], 1, [Defined if we are using a widget-based UI])
     UI=swig
+    WIDGET=widget
   fi
 fi
 
@@ -340,7 +342,7 @@ dnl Look for GTK (default=yes)
 if test -z "$UI"; then
   AC_MSG_CHECKING(whether GTK UI requested)
   AC_ARG_WITH(gtk,
-  [  --without-gtk           don't use GTK for user interface],
+  [  --without-gtk           do\'t use GTK for user interface],
   if test "$withval" = no; then gtk=no; else gtk=yes; fi,
   if test "$fakeglib" = yes; then gtk=no; else gtk=yes; fi)
   AC_MSG_RESULT($gtk)

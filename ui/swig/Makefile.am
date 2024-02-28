@@ -31,15 +31,24 @@ CLEANFILES += $(ui_swig_built)
 
 ui_swig_files = \
 		ui/swig/swig_ui.c \
-                ui/swig/options.c
+		ui/swig/ui_io.c \
+                ui/swig/keysyms.c
+                # ui/swig/options.c
 
-ui_swig_built = \
-                ui/swig/options.c
+# ui_swig_built = \
+#                 ui/swig/options.c
 
-EXTRA_DIST += \
-              ui/swig/options.pl \
-              ui/swig/options-header.pl
+# EXTRA_DIST += \
+#               ui/swig/options.pl \
+#               ui/swig/options-header.pl
 
-ui/swig/options.c: $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/swig/options.pl $(srcdir)/ui/options.dat $(srcdir)/perl/Fuse.pm $(srcdir)/perl/Fuse/Dialog.pm
-	@$(MKDIR_P) ui/swig
-	$(AM_V_GEN)$(PERL) $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/options.dat | $(PERL) -I$(srcdir)/perl $(srcdir)/ui/swig/options.pl - > $@.tmp && mv $@.tmp $@
+# ui/swig/options.c: $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/swig/options.pl $(srcdir)/ui/options.dat $(srcdir)/perl/Fuse.pm $(srcdir)/perl/Fuse/Dialog.pm
+# 	@$(MKDIR_P) ui/swig
+# 	$(AM_V_GEN)$(PERL) $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/options.dat | $(PERL) -I$(srcdir)/perl $(srcdir)/ui/swig/options.pl - > $@.tmp && mv $@.tmp $@
+
+
+# ui_swig_built = ui/swig/keysyms.c
+
+# ui/swig/keysyms.c: $(srcdir)/keysyms.pl $(srcdir)/keysyms.dat
+# 	@$(MKDIR_P) ui/swig
+# 	$(AM_V_GEN)$(PERL) -I$(srcdir)/perl $(srcdir)/keysyms.pl swig $(srcdir)/keysyms.dat > $@.tmp && mv $@.tmp $@
