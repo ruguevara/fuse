@@ -136,12 +136,6 @@ static int txt_output_enabled = 1;
 
 static libspectrum_word image[DISPLAY_SCREEN_HEIGHT][DISPLAY_SCREEN_WIDTH];
 
-static int disp_max_x = 0;
-static int disp_max_y = 0;
-static int plot_max_x = 0;
-static int plot_max_y = 0;
-static int paused = 0;
-static int pressed_counter = 0;
 static int pressed = 0;
 static int log_message_y = 0;
 
@@ -162,7 +156,7 @@ void log_message(const char *fmt, ...) {
 }
 
 int ui_init(int *argc, char ***argv) {
-    int y = 0;
+    if( ui_widget_init() ) return 1;
     // if (txt_output_enabled) {
         tb_init();
         tb_set_output_mode(TB_OUTPUT_216);
@@ -175,13 +169,10 @@ int ui_init(int *argc, char ***argv) {
 }
 
 int ui_end(void) {
+    ui_widget_end();
     // if (txt_output_enabled) {
         tb_shutdown();
     // }
-    printf("\n");
-    printf("disp_max_x=%d disp_max_y=%d\n", disp_max_x, disp_max_y);
-    printf("plot_max_x=%d plot_max_y=%d\n", plot_max_x, plot_max_y);
-
     /* No error */
     return 0;
 }
@@ -198,8 +189,8 @@ int ui_event(void) {
     struct tb_event ev;
 
     if (pressed) {
-        log_message("\n\r");
-        log_message("input_event release: %d\n\r", fuse_event.types.key.native_key);
+        // log_message("\n\r");
+        // log_message("input_event release: %d\n\r", fuse_event.types.key.native_key);
         fuse_event.type = INPUT_EVENT_KEYRELEASE;
         input_event(&fuse_event);
         pressed = 0;
@@ -207,22 +198,21 @@ int ui_event(void) {
 
     tb_peek_event(&ev, 1);
     while (ev.type == TB_EVENT_KEY) {
-        log_message("\n\r");
-        log_message_reset();
-        log_message("key: %d ch: %d\n\r", ev.key, ev.ch);
+        // log_message("\n\r");
+        // log_message_reset();
+        // log_message("key: %d ch: %d\n\r", ev.key, ev.ch);
         input_key fuse_keysym;
         fuse_keysym = keysyms_remap(ev.ch | ev.key);
         if (fuse_keysym != INPUT_KEY_NONE) {
-            log_message("sym key: %d -> %d\n\r", ev.ch, fuse_keysym);
+            // log_message("sym key: %d -> %d\n\r", ev.ch, fuse_keysym);
             fuse_event.type = INPUT_EVENT_KEYPRESS;
             fuse_event.types.key.native_key = fuse_keysym;
             fuse_event.types.key.spectrum_key = fuse_keysym;
-            log_message("input_event pressed: %d\n\r", fuse_event.types.key.native_key);
+            // log_message("input_event pressed: %d\n\r", fuse_event.types.key.native_key);
             input_event(&fuse_event);
             pressed = fuse_keysym;
-            pressed_counter = 2;
-        } else {
-            log_message("fuse_keysym = INPUT_KEY_NONE\n\r");
+        // } else {
+        //     log_message("fuse_keysym = INPUT_KEY_NONE\n\r");
         }
         break;
     }
@@ -341,9 +331,6 @@ void uidisplay_area(int x, int y, int w, int h) {
         ++ptr2;
         }
     }
-    if (txt_output_enabled) {
-        tb_present();
-    }
 }
 
 void uidisplay_frame_end(void) {
@@ -375,9 +362,6 @@ void uidisplay_plot16(int x, int y, libspectrum_word data, libspectrum_byte ink,
 void uidisplay_plot8(int x, int y, libspectrum_byte data, libspectrum_byte ink,
                      libspectrum_byte paper) {
     x <<= 3;
-    plot_max_x = plot_max_x < x ? x : plot_max_x;
-    plot_max_y = plot_max_y < y ? y : plot_max_y;
-
     libspectrum_word *dest = &image[y][x];
     *(dest++) = (data & 0x80) ? ink : paper;
     *(dest++) = (data & 0x40) ? ink : paper;
