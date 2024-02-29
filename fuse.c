@@ -186,7 +186,7 @@ int main(int argc, char **argv)
 #ifdef GEKKO
   fatInitDefault();
 #endif				/* #ifdef GEKKO */
-  
+
   if(fuse_init(argc,argv)) {
     fprintf(stderr,"%s: error initialising -- giving up!\n", fuse_progname);
     return 1;
@@ -199,14 +199,44 @@ int main(int argc, char **argv)
     r = unittests_run();
   } else {
     while( !fuse_exiting ) {
-      z80_do_opcodes();
-      event_do_events();
+      z80_do_opcodes();    // does opcodes until next scheduled event looking up global event_next_event var
+      event_do_events();   // executes all due events, can sleep in timer_event according to emulation speed
+    // From init above we have 2 events scheduled
+    // event_add( 0, timer_event );  -> timer_frame
+    //     timer_frame() {  // sleep until next frame according to emulation speed, reschedules itself
+    //         TODO for libfuse we either need to
+    //           - hotswap this event to sleepless and timeless version
+    //           - or crank up the speed to max and let the event do the sleep. But is this case we perhaps will loose all the sound
+    //         while(timer_get_time() < start_time)
+    //             timer_sleep(TEN_MS);
+    //         event_add( last_tstates + tstates_until_next_timer, timer_event );
+    // }
+    // event_add( machine->timings.tstates_per_frame, spectrum_frame_event );  -> spectrum_frame_event_fn
+    //     spectrum_frame_event_fn( libspectrum_dword last_tstates, int type, void *user_data ) {
+    //         ...
+    //         psg_frame();
+    //         spectrum_frame();
+    //         z80_interrupt();
+    //         ui_joystick_poll();
+    //         ui_event();                 // implemented by UI layer
+    //         ui_error_frame();
+    //     }
+    //     spectrum_frame() {
+    //         event_frame(frame_length);  // updates tstates for each event
+    //         sound_frame();
+    //         display_frame();
+    //         profile_frame(frame_length);
+    //         event_add(machine_current->timings.tstates_per_frame, spectrum_frame_event) // reschedules spectrum_frame_event
+    //         loader_frame(frame_length);
+    //         phantom_typist_frame();
+    //     }
+    // registered events have an id
     }
     r = debugger_get_exit_code();
   }
 
   fuse_end();
-  
+
   return r;
 }
 
@@ -367,7 +397,7 @@ static int fuse_init(int argc, char **argv)
     fuse_progname = argv[0];
   else
     fuse_progname = "fuse";
-  
+
   libspectrum_error_function = ui_libspectrum_error;
 
 #ifdef GEKKO
@@ -420,7 +450,7 @@ creator_init( void *context )
   unsigned int version[4] = { 0, 0, 0, 0 };
   char *custom, osname[ 192 ];
   static const size_t CUSTOM_SIZE = 256;
-  
+
   libspectrum_error error; int sys_error;
 
   const char *gcrypt_version;
@@ -550,7 +580,7 @@ int fuse_emulation_pause(void)
     ui_error( UI_ERROR_INFO, "Stopping competition mode RZX recording" );
     error = rzx_stop_recording(); if( error ) return error;
   }
-      
+
   /* If we had sound enabled (and hence doing the speed regulation),
      turn it off */
   sound_pause();
@@ -594,7 +624,7 @@ setup_start_files( start_files_t *start_files )
 
   start_files->simpleide_master =
     utils_safe_strdup( settings_current.simpleide_master_file );
-  start_files->simpleide_slave = 
+  start_files->simpleide_slave =
     utils_safe_strdup( settings_current.simpleide_slave_file );
 
   start_files->zxatasp_master =
@@ -710,10 +740,10 @@ parse_nonoption_args( int argc, char **argv, int first_arg,
         start_files->disk_plus3 = filename;
       else if( machine_current->capabilities &
                  LIBSPECTRUM_MACHINE_CAPABILITY_TRDOS_DISK )
-        start_files->disk_beta = filename; 
+        start_files->disk_beta = filename;
       else {
         if( periph_is_active( PERIPH_TYPE_BETA128 ) )
-          start_files->disk_beta = filename; 
+          start_files->disk_beta = filename;
         else if( periph_is_active( PERIPH_TYPE_PLUSD ) )
           start_files->disk_plusd = filename;
         else if( periph_is_active( PERIPH_TYPE_DIDAKTIK80 ) )

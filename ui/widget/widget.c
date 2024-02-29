@@ -496,20 +496,15 @@ int widget_do( widget_type which, void *data )
   /* If we don't have a UI yet, we can't output widgets */
   if( !display_ui_initialised ) return 1;
 
-  printf("widget_do: %d\n", which);
-
   if( which == WIDGET_TYPE_QUERY && !settings_current.confirm_actions ) {
     widget_query.confirm = 1;
     return 0;
   }
 
-  printf("ui_widget_level: %d\n", ui_widget_level);
-
   if( ui_widget_level == -1 ) uidisplay_frame_save();
 
   /* We're now one widget level deeper */
   ui_widget_level++;
-  printf("ui_widget_level: %d\n", ui_widget_level);
 
   /* Store what type of widget we are and what data we were given */
   widget_return[ui_widget_level].type = which;
@@ -517,7 +512,6 @@ int widget_do( widget_type which, void *data )
 
   uidisplay_frame_restore();
 
-  printf("draw\n");
   /* Draw this widget */
   widget_data[ which ].draw( data );
 
@@ -527,7 +521,6 @@ int widget_do( widget_type which, void *data )
   /* Process this widget until it returns */
   widget_return[ui_widget_level].finished = 0;
   while( ! widget_return[ui_widget_level].finished ) {
-
     /* Go to sleep for a bit */
     timer_sleep( 10 );
 
