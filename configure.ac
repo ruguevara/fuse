@@ -59,6 +59,7 @@ AC_DEFINE([FUSE_COPYRIGHT], [fuse_copyright], [Define copyright of Fuse])
 
 dnl Checks for programs.
 AC_PROG_CC
+AC_PROG_CXX
 AM_PROG_CC_C_O
 AC_PATH_PROG(PERL, perl)
 AC_SUBST(PERL)
@@ -143,7 +144,7 @@ AS_IF([test "$fakeglib" = no], [
   PKG_CHECK_MODULES(
     [GLIB],
     [glib-2.0 >= 2.20.0],
-    [AC_DEFINE([HAVE_LIB_GLIB], 1, [Defined if we've got GLib])],
+    [AC_DEFINE([HAVE_LIB_GLIB], 1, [Defined if we\'ve got GLib])],
     [AC_MSG_ERROR([GLib not found, and libspectrum has no internal replacement])]
   )
 ])
@@ -163,6 +164,20 @@ AC_COMPILE_IFELSE(
 )
 CPPFLAGS="$ac_save_CPPFLAGS"
 AC_SUBST(LIBSPEC_HAVE_ZLIB)
+
+dnl Check if we need to build pybind11 wrapper instead of the program
+
+AC_ARG_WITH([pyext],
+  [AS_HELP_STRING([--with-pyext], [Build Python extension instead of the program])],
+  [case "${with_pyext}" in
+    yes) with_pyext=true ;;
+    no)  with_pyext=false ;;
+    *)   AC_MSG_ERROR([Bad value ${with_pyext} for --with-pyext]) ;;
+   esac],
+  [with_pyext=false])
+  AX_PYBIND11
+AM_CONDITIONAL([BUILD_PYEXT], [test x$with_pyext = xtrue])
+
 
 dnl Select a user interface
 
@@ -321,6 +336,7 @@ if test -z "$UI"; then
     UI=null
   fi
 fi
+
 
 dnl Look for SWIG library interface as fake UI (default=no)
 if test -z "$UI"; then

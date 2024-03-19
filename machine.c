@@ -152,9 +152,9 @@ machine_select( libspectrum_machine type )
 
       /* If we couldn't select the new machine type, try falling back
 	 to plain old 48K */
-      if( type != LIBSPECTRUM_MACHINE_48 ) 
+      if( type != LIBSPECTRUM_MACHINE_48 )
 	error = machine_select( LIBSPECTRUM_MACHINE_48 );
-	
+
       /* If that still didn't work, give up */
       if( error ) {
 	ui_error( UI_ERROR_ERROR, "can't select 48K machine. Giving up." );
@@ -163,7 +163,7 @@ machine_select( libspectrum_machine type )
 	ui_error( UI_ERROR_INFO, "selecting 48K machine" );
 	return 0;
       }
-      
+
       return 0;
     }
   }
@@ -208,7 +208,7 @@ machine_select_machine( fuse_machine_info *machine )
   machine_current = machine;
 
   settings_set_string( &settings_current.start_machine, machine->id );
-  
+
   tstates = 0;
 
   /* Reset the event stack */
@@ -285,7 +285,7 @@ machine_load_rom_bank_from_file( memory_page* bank_map, int page_num,
     return 1;
   }
   if( error ) return error;
-  
+
   if( rom.length != expected_length ) {
     ui_error( UI_ERROR_ERROR,
 	      "ROM '%s' is %ld bytes long; expected %ld bytes",
@@ -312,6 +312,8 @@ machine_load_rom_bank( memory_page* bank_map, int page_num,
 
   if( fallback ) custom = !!strcmp( filename, fallback );
 
+  printf("machine_load_rom_bank %s, %d\n", filename, custom);
+
   retval = machine_load_rom_bank_from_file( bank_map, page_num, filename,
     expected_length, custom );
   if( retval && fallback && custom )
@@ -324,6 +326,7 @@ int
 machine_load_rom( int page_num, const char *filename, const char *fallback,
   size_t expected_length )
 {
+  printf("machine_load_rom %s\n", filename);
   return machine_load_rom_bank( memory_map_rom, page_num, filename, fallback,
     expected_length );
 }
@@ -419,7 +422,7 @@ machine_set_variable_timings( fuse_machine_info *machine )
   if( settings_current.late_timings ) machine->line_times[0]++;
 
   for( y=1; y<DISPLAY_SCREEN_HEIGHT+1; y++ ) {
-    machine->line_times[y] = machine->line_times[y-1] + 
+    machine->line_times[y] = machine->line_times[y-1] +
                              machine->timings.tstates_per_line;
   }
 }

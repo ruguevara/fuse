@@ -18,6 +18,7 @@
 ## Author contact information:
 ##
 ## E-mail: philip-fuse@shadowmagic.org.uk
+##         ruslan.gr@gmail.com
 
 if UI_SWIG
 
@@ -31,9 +32,10 @@ CLEANFILES += $(ui_swig_built)
 
 ui_swig_files = \
 		ui/swig/swig_ui.c \
-		ui/swig/ui_io.c \
-                ui/swig/keysyms.c
-                # ui/swig/options.c
+		ui/swig/keysyms.c \
+		ui/swig/wrapper.c
+#		ui/swig/ui_io.c
+#		ui/swig/options.c
 
 # ui_swig_built = \
 #                 ui/swig/options.c
@@ -52,3 +54,35 @@ ui_swig_files = \
 # ui/swig/keysyms.c: $(srcdir)/keysyms.pl $(srcdir)/keysyms.dat
 # 	@$(MKDIR_P) ui/swig
 # 	$(AM_V_GEN)$(PERL) -I$(srcdir)/perl $(srcdir)/keysyms.pl swig $(srcdir)/keysyms.dat > $@.tmp && mv $@.tmp $@
+
+
+if BUILD_PYEXT
+
+fuzx_SOURCES = $(fuzx_files)
+fuzx_OBJECTS = $(fuzx_SOURCES:.cpp=.o)
+fuzx_MODULE = fuzx$(PYTHON_EXT_SUFFIX)
+
+# Custom compilation rule for source files
+%.o: %.cpp
+	$(CXX) $(AM_CXXFLAGS) $(CXXFLAGS) $(PYBIND11_CPPFLAGS) $(PYTHON_INCLUDES) -fPIC -c $< -o $@
+
+# Custom linking rule to create the Python extension module
+$(fuzx_MODULE):	$(fuzx_OBJECTS)
+	$(CXX) $(AM_LDFLAGS) $(LDFLAGS) \
+	$(PYTHON_LIBS) \
+	$(fuse_OBJECTS) $(fuse_LDADD) \
+	 -shared $^ -o $@
+
+# $(fuse_OBJECTS) $(fuse_DEPENDENCIES) $(EXTRA_fuse_DEPENDENCIES)
+
+
+# Ensure the extension module is cleaned up on 'make clean'
+CLEANFILES += $(fuzx_OBJECTS) $(fuzx_MODULE)
+
+# Target to build the extension module
+all-local:	$(fuzx_MODULE)
+
+endif
+
+fuzx_files = \
+	ui/swig/py_wrapper.cpp

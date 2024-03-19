@@ -42,7 +42,9 @@ int fuse_emulation_unpause(void);
 int fuse_main(int argc, char **argv);
 #endif
 
-void fuse_abort( void ) GCC_NORETURN;	/* Emergency shutdown */
+int fuse_init(int argc, char **argv);   /* Initialise FUSE */
+int fuse_end(void);			             /* Clean up after FUSE */
+void fuse_abort( void ) GCC_NORETURN;	 /* Emergency shutdown */
 
 extern libspectrum_creator *fuse_creator; /* Creator information for file
 					     formats which support this */
