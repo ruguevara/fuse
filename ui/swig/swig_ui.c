@@ -221,7 +221,6 @@ int uidisplay_hotswap_gfx_mode(void) {
 
 int uidisplay_init(int width, int height) {
     /* No error */
-    printf("uidisplay_init %d x %d\n", width, height);
     return 0;
 }
 

@@ -48,7 +48,6 @@ spec48_port_from_ula( libspectrum_word port )
 
 int spec48_init( fuse_machine_info *machine )
 {
-  printf("Initializing 48K machine\n" );
   machine->machine = LIBSPECTRUM_MACHINE_48;
   machine->id = "48";
 
@@ -74,7 +73,6 @@ spec48_reset( void )
 {
   int error;
 
-  printf( "Resetting to 48K mode with ROM %s\n", settings_current.rom_48);
   error = machine_load_rom( 0, settings_current.rom_48,
                             settings_default.rom_48, 0x4000 );
   if( error ) return error;

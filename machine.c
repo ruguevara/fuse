@@ -312,8 +312,6 @@ machine_load_rom_bank( memory_page* bank_map, int page_num,
 
   if( fallback ) custom = !!strcmp( filename, fallback );
 
-  printf("machine_load_rom_bank %s, %d\n", filename, custom);
-
   retval = machine_load_rom_bank_from_file( bank_map, page_num, filename,
     expected_length, custom );
   if( retval && fallback && custom )
@@ -326,7 +324,6 @@ int
 machine_load_rom( int page_num, const char *filename, const char *fallback,
   size_t expected_length )
 {
-  printf("machine_load_rom %s\n", filename);
   return machine_load_rom_bank( memory_map_rom, page_num, filename, fallback,
     expected_length );
 }
