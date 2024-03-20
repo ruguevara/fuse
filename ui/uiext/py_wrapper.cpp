@@ -32,7 +32,7 @@
 
 // Buliding:
 // ./autogen.sh
-// ./configure --with-swig --with-pyext --without-zlib --without-png --with-pic --with-roms-dir=roms
+// ./configure --with-uiext --with-pyext --without-zlib --without-png --with-pic --with-roms-dir=roms
 // make
 
 #include <ios>
@@ -55,6 +55,8 @@ extern "C" {
 #include "../../tape.h"
 #include "../../settings.h"
 #include "../../timer/timer.h"
+#include "../../snapshot.h"
+#include "../../fuse.h"
 
 extern int fuse_exiting;		/* Shall we exit now? */
 
@@ -157,6 +159,13 @@ public:
     void LoadTapeWait(const std::string &filename) const {
         LoadTape(filename, true);
         WaitFastLoading();
+    }
+
+    void LoadSnapshot(const std::string &filename) const {
+        std::cerr << "Fuzx load snapshot " << filename << std::endl;
+        fuse_emulation_pause();
+        check_status(snapshot_read(filename.c_str()));
+        fuse_emulation_unpause();
     }
 
     settings_info& GetSettings() const {

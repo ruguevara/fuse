@@ -31,7 +31,7 @@
 #include "input.h"
 #include "keyboard.h"
 
-#include <ui/swig/termbox2.h>
+#include <ui/uiext/termbox2.h>
 
 keysyms_map_t keysyms_map[] = {
 

@@ -20,40 +20,40 @@
 ## E-mail: philip-fuse@shadowmagic.org.uk
 ##         ruslan.gr@gmail.com
 
-if UI_SWIG
+if UI_UIEXT
 
-fuse_SOURCES += $(ui_swig_files)
+fuse_SOURCES += $(ui_uiext_files)
 
-BUILT_SOURCES += $(ui_swig_built)
+BUILT_SOURCES += $(ui_uiext_built)
 
 endif
 
-CLEANFILES += $(ui_swig_built)
+CLEANFILES += $(ui_uiext_built)
 
-ui_swig_files = \
-		ui/swig/swig_ui.c \
-		ui/swig/keysyms.c \
-		ui/swig/wrapper.c
-#		ui/swig/ui_io.c
-#		ui/swig/options.c
+ui_uiext_files = \
+		ui/uiext/uiext_ui.c \
+		ui/uiext/keysyms.c \
+		ui/uiext/wrapper.c
+#		ui/uiext/ui_io.c
+#		ui/uiext/options.c
 
-# ui_swig_built = \
-#                 ui/swig/options.c
+# ui_uiext_built = \
+#                 ui/uiext/options.c
 
 # EXTRA_DIST += \
-#               ui/swig/options.pl \
-#               ui/swig/options-header.pl
+#               ui/uiext/options.pl \
+#               ui/uiext/options-header.pl
 
-# ui/swig/options.c: $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/swig/options.pl $(srcdir)/ui/options.dat $(srcdir)/perl/Fuse.pm $(srcdir)/perl/Fuse/Dialog.pm
-# 	@$(MKDIR_P) ui/swig
-# 	$(AM_V_GEN)$(PERL) $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/options.dat | $(PERL) -I$(srcdir)/perl $(srcdir)/ui/swig/options.pl - > $@.tmp && mv $@.tmp $@
+# ui/uiext/options.c: $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/uiext/options.pl $(srcdir)/ui/options.dat $(srcdir)/perl/Fuse.pm $(srcdir)/perl/Fuse/Dialog.pm
+# 	@$(MKDIR_P) ui/uiext
+# 	$(AM_V_GEN)$(PERL) $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/options.dat | $(PERL) -I$(srcdir)/perl $(srcdir)/ui/uiext/options.pl - > $@.tmp && mv $@.tmp $@
 
 
-# ui_swig_built = ui/swig/keysyms.c
+# ui_uiext_built = ui/uiext/keysyms.c
 
-# ui/swig/keysyms.c: $(srcdir)/keysyms.pl $(srcdir)/keysyms.dat
-# 	@$(MKDIR_P) ui/swig
-# 	$(AM_V_GEN)$(PERL) -I$(srcdir)/perl $(srcdir)/keysyms.pl swig $(srcdir)/keysyms.dat > $@.tmp && mv $@.tmp $@
+# ui/uiext/keysyms.c: $(srcdir)/keysyms.pl $(srcdir)/keysyms.dat
+# 	@$(MKDIR_P) ui/uiext
+# 	$(AM_V_GEN)$(PERL) -I$(srcdir)/perl $(srcdir)/keysyms.pl uiext $(srcdir)/keysyms.dat > $@.tmp && mv $@.tmp $@
 
 
 if BUILD_PYEXT
@@ -85,4 +85,4 @@ all-local:	$(fuzx_MODULE)
 endif
 
 fuzx_files = \
-	ui/swig/py_wrapper.cpp
+	ui/uiext/py_wrapper.cpp

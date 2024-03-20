@@ -78,7 +78,7 @@ tags
 /ui/gtk/options.h
 /ui/gtk/options_internals.h
 /ui/null/options.c
-/ui/swig/options.c
+/ui/uiext/options.c
 /ui/sdl/keysyms.c
 /ui/widget/fuse.font
 /ui/widget/menu_data.c

@@ -33,7 +33,7 @@ my $ui = shift;
 $ui = 'gtk' unless defined $ui;
 
 die "$0: unrecognised user interface: $ui\n"
-  unless 0 < grep { $ui eq $_ } ( 'gtk', 'x', 'fb', 'sdl', 'win32', 'wii', 'swig' );
+  unless 0 < grep { $ui eq $_ } ( 'gtk', 'x', 'fb', 'sdl', 'win32', 'wii', 'uiext' );
 
 sub fb_keysym ($) {
 
@@ -155,7 +155,7 @@ my %ui_data = (
 	      function => sub ($) { "GDK_KEY_$_[0]" },
     	    },
 
-    swig  => { headers => [ 'ui/swig/termbox2.h'],
+    uiext  => { headers => [ 'ui/uiext/termbox2.h'],
 	      max_length => 18,
 	      skips => { map { $_ => 1 } ( 'Hyper_L','Hyper_R','Caps_Lock',
                          'A' .. 'Z', 'asciitilde', 'bar', 'dead_circumflex',

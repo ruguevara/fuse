@@ -338,18 +338,18 @@ if test -z "$UI"; then
 fi
 
 
-dnl Look for SWIG library interface as fake UI (default=no)
+dnl Look for UIEXT library interface as fake UI (default=no)
 if test -z "$UI"; then
-  AC_MSG_CHECKING(whether SWIG interface requested)
-  AC_ARG_WITH(swig,
-  [  --with-swig          use SWIG library interface as fake UI],
-  if test "$withval" = no; then swig_ui=no; else swig_ui=yes; fi,
-  swig_ui=no)
-  AC_MSG_RESULT($swig_ui)
-  if test "$swig_ui" = yes; then
-    AC_DEFINE([UI_SWIG], 1, [Defined if SWIG UI is in use])
+  AC_MSG_CHECKING(whether UIEXT interface requested)
+  AC_ARG_WITH(uiext,
+  [  --with-uiext          use UIEXT library interface as fake UI],
+  if test "$withval" = no; then uiext_ui=no; else uiext_ui=yes; fi,
+  uiext_ui=no)
+  AC_MSG_RESULT($uiext_ui)
+  if test "$uiext_ui" = yes; then
+    AC_DEFINE([UI_UIEXT], 1, [Defined if UIEXT UI is in use])
     AC_DEFINE([USE_WIDGET], 1, [Defined if we are using a widget-based UI])
-    UI=swig
+    UI=uiext
     WIDGET=widget
   fi
 fi
@@ -474,7 +474,7 @@ fi
 AM_CONDITIONAL(UI_FB, test "$UI" = fb)
 AM_CONDITIONAL(UI_GTK, test "$UI" = gtk)
 AM_CONDITIONAL(UI_NULL, test "$UI" = null)
-AM_CONDITIONAL(UI_SWIG, test "$UI" = swig)
+AM_CONDITIONAL(UI_UIEXT, test "$UI" = uiext)
 AM_CONDITIONAL(UI_SDL, test "$UI" = sdl)
 AM_CONDITIONAL(UI_WII, test "$UI" = wii)
 AM_CONDITIONAL(UI_WIN32, test "$UI" = win32)

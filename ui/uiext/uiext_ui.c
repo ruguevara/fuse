@@ -32,8 +32,6 @@
 #include "settings.h"
 #include "timer/timer.h"
 
-#include <stdio.h>
-
 // keysyms_map_t keysyms_map[] = {
 //   { 0, 0 } /* End marker */
 // };

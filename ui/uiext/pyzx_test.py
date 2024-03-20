@@ -54,7 +54,7 @@ while True:
         break
     zx.do_opcodes()
     zx.do_events()
-    if frame % 500 == 0:
+    if frame % 5000 == 0:
         print_attrs(zx.screen_data[-768:])
         print()
     frame += 1
